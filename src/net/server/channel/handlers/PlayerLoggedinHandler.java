@@ -234,9 +234,8 @@ public final class PlayerLoggedinHandler extends AbstractMaplePacketHandler {
 
                 c.announce(MaplePacketCreator.getCharInfo(player));
                 if (!player.isHidden()) {
-                    // 魔改：gm登录不隐身 加了false
-                    if(false && player.isGM() && YamlConfig.config.server.USE_AUTOHIDE_GM) {
-                         player.toggleHide(true);
+                    if(player.isGM() && YamlConfig.config.server.USE_AUTOHIDE_GM) {
+                        player.toggleHide(true);
                     }
                 }
                 player.sendKeymap();
