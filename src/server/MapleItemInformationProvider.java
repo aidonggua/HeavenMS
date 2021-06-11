@@ -1014,7 +1014,7 @@ public class MapleItemInformationProvider {
     public static void magicModifyScroll(Item equip) {
         Equip nEquip = (Equip) equip;
         byte level = nEquip.getLevel();
-        if (level >= 100) {
+        if (level < 100) {
             nEquip.setUpgradeSlots((byte) (nEquip.getUpgradeSlots() + 1));
         } else {
             nEquip.setUpgradeSlots((byte) 0);
