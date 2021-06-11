@@ -597,7 +597,7 @@ public class MapleItemInformationProvider {
         if (scrollReqsCache.containsKey(itemId)) {
             return scrollReqsCache.get(itemId);
         }
-        
+
         List<Integer> ret = new ArrayList<>();
         MapleData data = getItemData(itemId);
         data = data.getChildByPath("req");
@@ -606,7 +606,7 @@ public class MapleItemInformationProvider {
                 ret.add(MapleDataTool.getInt(req));
             }
         }
-        
+
         scrollReqsCache.put(itemId, ret);
         return ret;
     }
@@ -918,7 +918,7 @@ public class MapleItemInformationProvider {
             }
         }
     }
-    
+
     /*
         Issue with clean slate found thanks to Masterrulax
         Vicious added in the clean slate check thanks to Crypter (CrypterDEV)
@@ -999,7 +999,26 @@ public class MapleItemInformationProvider {
                 }
             }
         }
+
+        magicModifyScroll(equip);
+
         return equip;
+    }
+
+    /**
+     * 魔改：无论任何装备都可以强化到100，强化到100之前，不扣强化次数，强化等级到100，强化次数清0
+     *
+     * @author yehao
+     * @date 2021/6/11
+     */
+    public static void magicModifyScroll(Item equip) {
+        Equip nEquip = (Equip) equip;
+        byte level = nEquip.getLevel();
+        if (level >= 100) {
+            nEquip.setUpgradeSlots((byte) (nEquip.getUpgradeSlots() + 1));
+        } else {
+            nEquip.setUpgradeSlots((byte) 0);
+        }
     }
 
     public static void improveEquipStats(Equip nEquip, Map<String, Integer> stats) {
@@ -1241,7 +1260,7 @@ public class MapleItemInformationProvider {
         untradeableCache.put(itemId, bRestricted);
         return bRestricted;
     }
-    
+
     public boolean isAccountRestricted(int itemId) {
         if (accountItemRestrictionCache.containsKey(itemId)) {
             return accountItemRestrictionCache.get(itemId);
@@ -1614,7 +1633,7 @@ public class MapleItemInformationProvider {
                 eq.getWatk() > 0 || eq.getMatk() > 0 || eq.getWdef() > 0 || eq.getMdef() > 0 || eq.getAcc() > 0 ||
                 eq.getAvoid() > 0 || eq.getSpeed() > 0 || eq.getJump() > 0 || eq.getHp() > 0 || eq.getMp() > 0);
     }
-    
+
     public boolean isUnmerchable(int itemId) {
         if(YamlConfig.config.server.USE_ENFORCE_UNMERCHABLE_CASH && isCash(itemId)) {
             return true;
@@ -1623,7 +1642,7 @@ public class MapleItemInformationProvider {
         if (YamlConfig.config.server.USE_ENFORCE_UNMERCHABLE_PET && ItemConstants.isPet(itemId)) {
             return true;
         }
-        
+
         return false;
     }
 
@@ -2039,7 +2058,7 @@ public class MapleItemInformationProvider {
 
     public List<Pair<Integer, Integer>> getMakerDisassembledItems(Integer itemId) {
         List<Pair<Integer, Integer>> items = new LinkedList<>();
-        
+
         Connection con;
         try {
             con = DatabaseConnection.getConnection();
@@ -2159,14 +2178,14 @@ public class MapleItemInformationProvider {
 
         return skillbook;
     }
-    
+
     public final QuestConsItem getQuestConsumablesInfo(final int itemId) {
         if (questItemConsCache.containsKey(itemId)) {
             return questItemConsCache.get(itemId);
         }
         MapleData data = getItemData(itemId);
         QuestConsItem qcItem = null;
-        
+
         MapleData infoData = data.getChildByPath("info");
         if (infoData.getChildByPath("uiData") != null) {
             qcItem = new QuestConsItem();
@@ -2174,7 +2193,7 @@ public class MapleItemInformationProvider {
             qcItem.grade = MapleDataTool.getInt("grade", infoData);
             qcItem.questid = MapleDataTool.getInt("questId", infoData);
             qcItem.items = new HashMap<>(2);
-            
+
             Map<Integer, Integer> cItems = qcItem.items;
             MapleData ciData = infoData.getChildByPath("consumeItem");
             if (ciData != null) {
@@ -2186,7 +2205,7 @@ public class MapleItemInformationProvider {
                 }
             }
         }
-        
+
         questItemConsCache.put(itemId, qcItem);
         return qcItem;
     }
@@ -2222,15 +2241,15 @@ public class MapleItemInformationProvider {
         public short prob, quantity;
         public String effect, worldmsg;
     }
-    
+
     public static final class QuestConsItem {
 
         public int questid, exp, grade;
         public Map<Integer, Integer> items;
-        
+
         public Integer getItemRequirement(int itemid) {
             return items.get(itemid);
         }
-        
+
     }
 }
